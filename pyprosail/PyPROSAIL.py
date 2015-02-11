@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import _prosail_model
+import prosail_model
 import numpy as np
 
 # Common leaf distributions
@@ -25,13 +25,15 @@ Extremophile = (0, 1)
 Spherical = (-0.35, -0.15)
 Uniform = (0, 0)
 
-def run(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith, solar_azimuth, view_zenith, view_azimuth, LIDF):
-	"""
-	Runs the ProSAIL model with the given parameters and returns a wavelength-reflectance
-	array.
 
-	Arguments:
-      
+def run(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith, solar_azimuth, view_zenith,
+        view_azimuth, LIDF):
+    """
+    Runs the ProSAIL model with the given parameters and returns a wavelength-reflectance
+    array.
+
+    Arguments:
+
       * ``N`` -- Structure co-efficient
       * ``chloro`` -- Chlorophyll content (ug per cm^2)
       * ``caroten`` -- Carotenoid content (ug per cm^2)
@@ -45,7 +47,7 @@ def run(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith,
       * ``solar_azimuth`` -- Solar azimuth angle (degrees)
       * ``view_zenith`` -- View zenith angle (degrees)
       * ``view_azimuth`` -- View azimuth angle (degrees)
-      * ``LIDF`` -- Leaf distibution function parameter(s) (see below)
+      * ``LIDF`` -- Leaf distribution function parameter(s) (see below)
 
     The leaf distribution function parameter(s) argument can be either:
 
@@ -53,55 +55,58 @@ def run(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith,
       * A tuple giving (average leaf slope, bimodality parameter). These parameters must sum to be less than 1.0. For
       convenience a number of predefined options are given including:
 
-      		* Planophile
-      		* Erectophile
-      		* Plagiophile
-      		* Extremophile
-      		* Spherical
-      		* Uniform
+        * Planophile
+        * Erectophile
+        * Plagiophile
+        * Extremophile
+        * Spherical
+        * Uniform
 
     Examples of valid values for the leaf distribution function parameter include:
 
-    	* 30 (a 30 degree average leaf angle)
-    	* (0, -1) (an average leaf slope of 0 and a bimodality parameter of -1)
-    	* PyProsail.Planophile
+        * 30 (a 30 degree average leaf angle)
+        * (0, -1) (an average leaf slope of 0 and a bimodality parameter of -1)
+        * PyProsail.Planophile
 
     Example usage:
 
-    
 
-	"""
 
-	try:
-		l = len(LIDF)
-		if l != 2:
-			# Raise error
-			pass
+    """
 
-		TypeLidf = 1
-		LIDFa = LIDF[0]
-		LIDFb = LIDF[1]
-	except TypeError:
-		TypeLidf = 2
-		LIDFa = LIDF
-		LIDFb = 0
+    try:
+        l = len(LIDF)
+        if l != 2:
+            # Raise error
+            pass
 
-	return(_run_prosail(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith, view_zenith, solar_azimuth, TypeLidf, LIDFa, LIDFb))
+        TypeLidf = 1
+        LIDFa = LIDF[0]
+        LIDFb = LIDF[1]
+    except TypeError:
+        TypeLidf = 2
+        LIDFa = LIDF
+        LIDFb = 0
+
+    return (
+        _run_prosail(N, chloro, caroten, brown, EWT, LMA, psoil, LAI, hot_spot, solar_zenith, view_zenith, solar_azimuth,
+                     TypeLidf, LIDFa, LIDFb))
+
 
 def _run_prosail(N, Cab, Car, Cbrown, Cw, Cm, psoil, LAI, hspot, tts, tto, psi, TypeLidf, LIDFa, LIDFb):
-	# Check parameters here
+    # Check parameters here
 
-	# TypeLidf must be either 1 or 2
-	if TypeLidf not in [1, 2]:
-		# Raise exception
-		pass
+    # TypeLidf must be either 1 or 2
+    if TypeLidf not in [1, 2]:
+        # Raise exception
+        pass
 
-	if TypeLidf == 1 and LIDFa + LIDFb > 1:
-		# Raise exception
-		pass
+    if TypeLidf == 1 and LIDFa + LIDFb > 1:
+        # Raise exception
+        pass
 
-	wavelengths = np.arange(400, 2501)
-	res = _prosail_model.run(N, Cab, Car, Cbrown, Cw, Cm, psoil, LAI, hspot, tts, tto, psi, TypeLidf, LIDFa, LIDFb)
+    wavelengths = np.arange(400, 2501)
+    res = prosail_model.run(N, Cab, Car, Cbrown, Cw, Cm, psoil, LAI, hspot, tts, tto, psi, TypeLidf, LIDFa, LIDFb)
 
-	arr = np.transpose(np.vstack( (wavelengths/1000.0, res) ))
-	return arr
+    arr = np.transpose(np.vstack((wavelengths / 1000.0, res)))
+    return arr
