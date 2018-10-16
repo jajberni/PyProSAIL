@@ -5,5 +5,5 @@ The main function is `run`, which runs the ProSAIL model and returns the results
 
 """
 
-from .PyProSAIL import *
+from .PyPROSAIL import *
 #__all__ = ['PyPROSAIL']
